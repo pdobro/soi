@@ -382,7 +382,7 @@ if (rp -> group == 1) {
   rdy_head[USER_Q] = rp;
 /* if head empty load to head then insert rp in tail */
 } else if (rp -> group == 2) {
-  	if(rdy_head[PRI_Q1] != NIL_PROC) 
+  	if(rdy_head[USER_Q2] != NIL_PROC) 
 			rdy_tail[USER_Q2]->p_nextready = rp;
 		 else 
 			rdy_head[USER_Q2] = rp;

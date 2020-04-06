@@ -20,9 +20,9 @@ int main (int argc, char* argv[])
  	 {
     		res = getprocnr(start + i);
     		if(res !=-1) 
-			printf("find process with pid: %d index: %d\n",start+i,res);
+			printf("found process with pid: %d index: %d\n",start+i,res);
     		else 
-			printf("cannot find process %d . errno: %d\n",start+i,errno); }
+			printf("cannot find process %d errno: %d\n",start+i,errno); }
 	}
   return 0;
 }
