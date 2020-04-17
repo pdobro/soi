@@ -181,13 +181,12 @@ PRIVATE void mm_init()
 
 
 
-
 PUBLIC int do_getpri(){
 	message m = mm_in;
-	return _taskcall (SYSTASK, SYS_GETPRI, &m);
+	return _taskcall(SYSTASK, SYS_GETPRI, &m);
 }
 
 PUBLIC int do_setpri(){
 	message m = mm_in;
-	return _taskcall (SYSTASK, SYS_SETPRI, &m);
+	return _taskcall(SYSTASK, SYS_SETPRI, &m);
 }

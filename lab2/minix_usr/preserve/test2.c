@@ -24,11 +24,12 @@ int main(int argc, char* argv[]){
 	clock_t b, e;
 	double result;
 	int i, j, group;
-	setpri(getpid(), 2);
+	group = atoi(argv[1]);
+	setpri(getpid(), group);
 
 
 	b = clock();
-	for(i = j = 0; i < 4000; i++){
+	for(i = j = 0; i < 2000; i++){
 		/*j+=160;*/
 		sqrt(i);
 	}

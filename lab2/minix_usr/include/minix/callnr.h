@@ -65,5 +65,6 @@
 
 #define REBOOT		  76
 #define SVRCTL		  77
-#define SETPRI		  78
-#define GETPRI		  79
+#define GETPRI     	  78
+#define SETPRI  	  79
+

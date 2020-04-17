@@ -81,6 +81,7 @@ struct proc {
 #define PPRI_USER	3	/* User process */
 #define PPRI_IDLE	4	/* Idle process */
 
+
 /* Magic process table addresses. */
 #define BEG_PROC_ADDR (&proc[0])
 #define END_PROC_ADDR (&proc[NR_TASKS + NR_PROCS])
@@ -104,8 +105,7 @@ struct proc {
 #define proc_vir2phys(p, vir) \
 			  (((phys_bytes)(p)->p_map[D].mem_phys << CLICK_SHIFT) \
 							+ (vir_bytes) (vir))
-#define  MAX_AGE 1000
-#define MIN_PRI 100
+
 EXTERN struct proc proc[NR_TASKS + NR_PROCS];	/* process table */
 EXTERN struct proc *pproc_addr[NR_TASKS + NR_PROCS];
 /* ptrs to process table slots; fast because now a process entry can be found

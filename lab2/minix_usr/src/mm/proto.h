@@ -37,8 +37,9 @@ _PROTOTYPE( int do_getset, (void)					);
 
 /* main.c */
 _PROTOTYPE( void main, (void)						);
-_PROTOTYPE( int do_getpri, (void)					);
-_PROTOTYPE( int do_setpri, (void)					);
+_PROTOTYPE( int do_getpri, (void)				);
+_PROTOTYPE( int do_setpri, (void)				);
+
 /* misc.c */
 _PROTOTYPE( int do_reboot, (void)					);
 _PROTOTYPE( int do_svrctl, (void)					);

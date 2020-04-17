@@ -36,6 +36,7 @@ PUBLIC void main()
   struct tasktab *ttp;
   struct exec e_hdr;
 
+
   /* Initialize the interrupt controller. */
   intr_init(1);
 
@@ -59,12 +60,9 @@ PUBLIC void main()
    * the stack pointer is set to the end of the data segment.  All the
    * processes are in low memory on the 8086.  On the 386 only the kernel
    * is in low memory, the rest is loaded in extended memory.
-   
+   */
 
-
-  proc[NR_TASKS+INIT_PROC_NR].group = 1;
-  proc[NR_TASKS+INIT_PROC_NR].time = 1;
-  /*Task stacks. */
+  /* Task stacks. */
   ktsb = (reg_t) t_stack;
 
   for (t = -NR_TASKS; t <= LOW_USER; ++t) {
@@ -133,6 +131,7 @@ PUBLIC void main()
   }
 
   proc[NR_TASKS+INIT_PROC_NR].p_pid = 1;/* INIT of course has pid 1 */
+   proc[NR_TASKS+INIT_PROC_NR].group = 1;
   bill_ptr = proc_addr(IDLE);		/* it has to point somewhere */
   proc_addr(IDLE)->p_priority = PPRI_IDLE;
   lock_pick_proc();

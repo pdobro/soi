@@ -147,8 +147,12 @@ FORWARD _PROTOTYPE( int do_sysctl, (message *m_ptr) );
 FORWARD _PROTOTYPE( int do_puts, (message *m_ptr) );
 FORWARD _PROTOTYPE( int do_findproc, (message *m_ptr) );
 
+
 FORWARD _PROTOTYPE( int do_getpri, (message *m_ptr) );
 FORWARD _PROTOTYPE( int do_setpri, (message *m_ptr) );
+
+
+
 
 
 /*===========================================================================*
@@ -184,8 +188,10 @@ PUBLIC void sys_task()
 	    case SYS_SYSCTL:	r = do_sysctl(&m);	break;
 	    case SYS_PUTS:	r = do_puts(&m);	break;
 	    case SYS_FINDPROC:	r = do_findproc(&m);	break;
-	    case SYS_GETPRI:  	r = do_getgroup(&m);	break;
-	    case SYS_SETPRI: 	r = do_setgroup(&m);	break;
+	    case SYS_GETPRI:  r = do_getpri(&m);	break;
+	    case SYS_SETPRI:  r = do_setpri(&m);	break;
+
+
 	    default:		r = E_BAD_FCN;
 	}
 
@@ -194,33 +200,42 @@ PUBLIC void sys_task()
   }
 }
 
-/*--------------------------------------------------*/
 
-PUBLIC int do_setpri(m_ptr)
+
+PRIVATE int do_setpri(m_ptr)
 message *m_ptr;
 {
-	struct proc *p;
+	struct proc *process;
+
 	int new_group;
 	new_group = m_ptr -> m1_i2;
-	for(p = BEG_PROC_ADDR; p < END_PROC_ADDR; p++){
-		if(istaskp(p) || isservp(p)) continue;
-		if((p -> p_pid == m_ptr -> m1_i1)){
-			p -> group = new_group;
-			return;
+
+	for(process = BEG_PROC_ADDR; process < END_PROC_ADDR; process++){
+		if(istaskp(process) || isservp(process)) continue;
+
+		if((process -> p_pid == m_ptr -> m1_i1)){
+			process -> group = new_group;
+			return OK;
 		}
 	}
+	return (ESRCH);
 }
 	
 
-PUBLIC int getpri(m_ptr)
+PRIVATE int do_getpri(m_ptr)
 message *m_ptr;
 {
-	struct proc *p;
-	for(p = BEG_PROC_ADDR; p < END_PROC_ADDR; p++){
-		if(istaskp(p) || isservp(p)) continue;
-		if(p -> p_pid == m_ptr -> m1_i1)
-			return p -> group;
+	struct proc *process;
+
+	for(process = BEG_PROC_ADDR; process < END_PROC_ADDR; process++){
+		if(istaskp(process) || isservp(process)) continue;
+
+		if(process -> p_pid == m_ptr -> m1_i1)
+			return process -> group;
 	}
+	return (ESRCH);
+}
+
 /*===========================================================================*
  *				do_fork					     *
  *===========================================================================*/
@@ -266,15 +281,11 @@ register message *m_ptr;	/* pointer to request message */
   rpc->sys_time = 0;
   rpc->child_utime = 0;
   rpc->child_stime = 0;
-
-  if (rpc -> p_pid % 3 == 0)
-      rpc ->group = 1;
-  else if (rpc -> p_pid % 3 == 1)
-      rpc -> group = 2;
-  else
-      rpc -> group = 3;
-  
-  rpc->time = 1;
+ 
+  /* !!!!!!!!!!!!!!!!*/
+  	rpc -> group = 1;
+    rpc -> time = 1;
+ 
   return(OK);
 }
 
@@ -1051,8 +1062,6 @@ message *m_ptr;			/* pointer to request message */
   }
   return(ESRCH);
 }
-
-
 
 /*===========================================================================*
  *				cause_sig				     *

@@ -319,17 +319,10 @@ PRIVATE void pick_proc()
   if ( (rp = rdy_head[USER_Q]) != NIL_PROC) {
 	proc_ptr = rp;
 	bill_ptr = rp;
+	
+	
 	return;
   }
-  if ( (rp = rdy_head[USER_Q2] != NIL_PROC) {
- 	proc_ptr = rp;
-	bill_ptr = rp;
-	return;
-  }
-  if ( (rp = rdy_head[USER_Q3] != NIL_PROC) {
-	proc_ptr = rp;
-	return;
- }
   /* No one is ready.  Run the idle task.  The idle task might be made an
    * always-ready user task to avoid this special case.
    */
@@ -346,10 +339,11 @@ register struct proc *rp;	/* this process is now runnable */
  * queues are maintained:
  *   TASK_Q   - (highest priority) for runnable tasks
  *   SERVER_Q - (middle priority) for MM and FS only
- *   USER_Q   - rounf robin
-     USER_Q2 - algorytm starzenia
-     USER_Q3 - pobłażający
-*/
+ *   USER_Q   - (lowest priority) for user processes
+ */
+
+  struct proc *temp;
+  struct proc *nextp;
 
   if (istaskp(rp)) {
 	if (rdy_head[TASK_Q] != NIL_PROC)
@@ -372,31 +366,46 @@ register struct proc *rp;	/* this process is now runnable */
 	rp->p_nextready = NIL_PROC;
 	return;
   }
-  /* Add user process to the front of the queue.  (Is a bit fairer to I/O
-   * bound processes.)
+  /* pusta kolejka
    */
-if (rp -> group == 1) {
-  if (rdy_head[USER_Q] == NIL_PROC)
-	rdy_tail[USER_Q] = rp;
-  rp->p_nextready = rdy_head[USER_Q];
-  rdy_head[USER_Q] = rp;
-/* if head empty load to head then insert rp in tail */
-} else if (rp -> group == 2) {
-  	if(rdy_head[USER_Q2] != NIL_PROC) 
-			rdy_tail[USER_Q2]->p_nextready = rp;
-		 else 
-			rdy_head[USER_Q2] = rp;
-		rdy_tail[USER_Q2] = rp;
-		rp->p_nextready = NIL_PROC;
-} else if (rp -> group == 3) {
-	if (rdy_head[USER_Q3] != NIL_PROC)
-		rdy_tail[USER_Q3]->p_nextready = rp;
-	else
-		rdy_head[USER_Q3] = rp;
-	rdy_tail[USER_Q3] = rp;
-	rp->p_nextready = NIL_PROC;
-	return;
-}
+  if (rdy_head[USER_Q] == NIL_PROC) {
+    rdy_head[USER_Q] = rp;
+    rdy_tail[USER_Q] = rp;
+    rp -> p_nextready = NIL_PROC;
+  return;
+  }
+
+  temp = rdy_head[USER_Q];
+  /*while (temp -> p_nextready -> group == rp -> group || temp -> p_nextready != NIL_PROC) {
+    temp = temp -> p_nextready
+  }
+  rp -> p_nextready = temp -> p_nextready;
+  temp -> p_nextready = rp;*/
+  /*pierwszy drugi rodzaj umieśc po ostatnim procesie tej samej grupy*/
+  if (rp -> group == 1 || rp -> group == 2){
+    while ((temp -> p_nextready != NIL_PROC)&&(temp -> p_nextready -> group <= rp -> group)){
+      temp = temp -> p_nextready;
+    }
+    nextp = temp -> p_nextready;
+    if (nextp == NIL_PROC){
+      rdy_tail[USER_Q] -> p_nextready = rp;
+      rdy_tail[USER_Q] = rp;
+      rdy_tail[USER_Q] -> p_nextready = NIL_PROC;
+    } else {
+      temp -> p_nextready = rp;
+      rp -> p_nextready = nextp;
+
+    }
+    return;
+  }
+  /*trzeci rodzaj dodaj na koniec kolejki*/
+  if (rp -> group == 3){
+    rdy_tail[USER_Q]->p_nextready = rp;
+    rdy_tail[USER_Q] = rp;
+    rdy_tail[USER_Q]->p_nextready = NIL_PROC;
+    return;
+  }
+
 
 }
 
@@ -436,7 +445,7 @@ register struct proc *rp;	/* this process is no longer runnable */
 		return;
 	}
 	qtail = &rdy_tail[SERVER_Q];
-   } else if (rp->group == 1){
+  } else {
 	if ( (xp = rdy_head[USER_Q]) == NIL_PROC) return;
 	if (xp == rp) {
 		rdy_head[USER_Q] = xp->p_nextready;
@@ -447,30 +456,7 @@ register struct proc *rp;	/* this process is no longer runnable */
 		return;
 	}
 	qtail = &rdy_tail[USER_Q];
-  } else if (rp->group == 2){
-	if ( (xp = rdy_head[USER_Q2]) == NIL_PROC) return;
-	if (xp == rp) {
-		rdy_head[USER_Q2] = xp->p_nextready;
-#if (CHIP == M68000)
-		if (rp == proc_ptr)
-#endif
-		pick_proc();
-		return;
-	}
-	qtail = &rdy_tail[USER_Q2];
-  } else if (rp->group == 3){
-	if ( (xp = rdy_head[USER_Q3]) == NIL_PROC) return;
-	if (xp == rp) {
-		rdy_head[USER_Q3] = xp->p_nextready;
-#if (CHIP == M68000)
-		if (rp == proc_ptr)
-#endif
-		pick_proc();
-		return;
-	}
-	qtail = &rdy_tail[USER_Q3];
   }
-  
 
   /* Search body of queue.  A process can be made unready even if it is
    * not running by being sent a signal that kills it.
@@ -490,39 +476,78 @@ PRIVATE void sched()
  * process is runnable, put the current process on the end of the user queue,
  * possibly promoting another user to head of the queue.
  */
+  struct proc *temp;
+  struct proc *nextp;
+  struct proc *last;
 
-  if (rdy_head[USER_Q] == NIL_PROC && rdy_head[USER_Q2 === NIL_PROC && rdy_head[USER_Q3 === NIL_PROC) return;
+  if (rdy_head[USER_Q] == NIL_PROC) return;
 
-  /* One or more user processes queued. */
-if (rdy_head[USER_Q != NIL_PROC)
-  	rdy_tail[USER_Q]->p_nextready = rdy_head[USER_Q];
-  	rdy_tail[USER_Q] = rdy_head[USER_Q];
-  	rdy_head[USER_Q] = rdy_head[USER_Q]->p_nextready;
-  	rdy_tail[USER_Q]->p_nextready = NIL_PROC;
-  	pick_proc();
-} else if (rdy_head[USER_Q2 != NIL_PROC] {
-	struct proc *p;
-	/*if head time < 1000 make every proc older and pick head*/
-	if (rdy_head[USER_Q2]->p_nextready->time < 1000)
-	{
-		for (p = rdy_head[USER_Q2]; p->p_nextready != NIL_PROC; p = p->p_nextready) {
-			if (p->p_nextready->time < 1000)
-				p->p_nextready->time +=1;
-		}
-		pick_proc();
-		return;
-	}
-	/* if head time > 1000 set time to  1 and pick this proc*/
-	else
-	{
-		rdy_head[USER_Q2]->time = 1;
-		rdy_tail[USER_Q2]->p_nextready = rdy_head[USER_Q2];
-		rdy_tail[USER_Q2] = rdy_head[USER_Q2];
-		rdy_head[USER_Q2] = rdy_head[USER_Q2]->p_nextready;
-		rdy_tail[USER_Q2]->p_nextready = NIL_PROC;
-		pick_proc();
-		return;
-	}
+
+  if (rdy_head[USER_Q] -> group == 1){
+    temp = rdy_head[USER_Q];
+    while ((temp -> p_nextready != NIL_PROC)&&(temp -> p_nextready -> group == 1)){
+      temp = temp -> p_nextready;
+  }
+  nextp = temp -> p_nextready;
+  if (temp == rdy_head[USER_Q]) {
+    return;
+  } else if (nextp == NIL_PROC){
+    rdy_tail[USER_Q] -> p_nextready = rdy_head[USER_Q];
+    rdy_tail[USER_Q] = rdy_head[USER_Q];
+    rdy_head[USER_Q] = rdy_head[USER_Q]->p_nextready;
+    rdy_tail[USER_Q] -> p_nextready = NIL_PROC;     
+    pick_proc();
+  } else {
+    struct proc *temp_head = rdy_head[USER_Q];
+    rdy_head[USER_Q] = rdy_head[USER_Q]->p_nextready;
+    temp -> p_nextready = temp_head;
+    temp_head -> p_nextready = nextp;
+    pick_proc();
+  }
+}
+if (rdy_head[USER_Q] -> group == 2){
+  temp = rdy_head[USER_Q];
+   while ((temp -> p_nextready != NIL_PROC)&&(temp -> p_nextready -> group == 3)){
+    temp = temp -> p_nextready;
+  }
+  last = temp;
+  nextp = temp -> p_nextready;
+    if (last == rdy_head[USER_Q]) {
+    return;
+  } else {
+      if (rdy_head[USER_Q] -> p_nextready -> time < 100) {
+        for (temp = rdy_head[USER_Q]; temp != last; temp = temp -> p_nextready) {
+          if (temp -> p_nextready -> time < 100)
+            temp -> p_nextready -> time++;
+        }
+        pick_proc();
+        return;
+      } else {
+        rdy_head[USER_Q] -> time = 1;
+        if (nextp == NIL_PROC) {
+          rdy_tail[USER_Q]->p_nextready = rdy_head[USER_Q];
+		      rdy_tail[USER_Q] = rdy_head[USER_Q];
+		      rdy_head[USER_Q] = rdy_head[USER_Q]->p_nextready;
+		      rdy_tail[USER_Q]->p_nextready = NIL_PROC;
+		      pick_proc();
+        } else {
+          struct proc *temp_head = rdy_head[USER_Q];
+          last -> p_nextready = rdy_head[USER_Q];
+		      rdy_head[USER_Q] = rdy_head[USER_Q]->p_nextready;
+          temp_head -> p_nextready = nextp;
+          pick_proc();
+        }
+      }
+  }
+
+}
+
+
+
+
+
+
+
 }
 
 /*==========================================================================*

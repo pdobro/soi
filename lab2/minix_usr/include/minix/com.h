@@ -132,11 +132,10 @@
 #	define SYS_GETMAP    18	/* fcn code for sys_getmap(procno, map_ptr) */
 #	define SYS_SYSCTL    19	/* fcn code for sys_sysctl(proc, req, argp) */
 #	define SYS_PUTS      20	/* fcn code for sys_puts(count, buf) */
-#	define SYS_FINDPROC  21	/* fcn code for sys_findproc(name, &task_nr,
-				   flags) */
+#	define SYS_FINDPROC  21
+#	define SYS_GETPRI    22
+#	define SYS_SETPRI    23
 
-#	define SYS_SETPRI	22
-#	define SYS_GETPRI	23
 
 #define HARDWARE          -1	/* used as source on interrupt generated msgs*/
 
