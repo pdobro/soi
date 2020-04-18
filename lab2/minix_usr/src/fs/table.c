@@ -95,8 +95,8 @@ PUBLIC _PROTOTYPE (int (*call_vec[]), (void) ) = {
 	no_sys,		/* 75 = SIGRETURN */
 	no_sys,		/* 76 = REBOOT */
 	do_svrctl,	/* 77 = SVRCTL */
-	no_sys,		/* 78  */
-	no_sys,		/* 79 */
+	no_sys,		/* 78  get priority*/
+	no_sys,		/* 79  set priority*/
 
 };
 /* This should not fail with "array size is negative": */

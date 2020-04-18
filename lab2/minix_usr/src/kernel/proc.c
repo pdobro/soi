@@ -491,13 +491,13 @@ PRIVATE void sched()
   nextp = temp -> p_nextready;
   if (temp == rdy_head[USER_Q]) {
     return;
-  } else if (nextp == NIL_PROC){
+  }else if (nextp == NIL_PROC){
     rdy_tail[USER_Q] -> p_nextready = rdy_head[USER_Q];
     rdy_tail[USER_Q] = rdy_head[USER_Q];
     rdy_head[USER_Q] = rdy_head[USER_Q]->p_nextready;
     rdy_tail[USER_Q] -> p_nextready = NIL_PROC;     
     pick_proc();
-  } else {
+  }else {
     struct proc *temp_head = rdy_head[USER_Q];
     rdy_head[USER_Q] = rdy_head[USER_Q]->p_nextready;
     temp -> p_nextready = temp_head;
@@ -514,23 +514,22 @@ if (rdy_head[USER_Q] -> group == 2){
   nextp = temp -> p_nextready;
     if (last == rdy_head[USER_Q]) {
     return;
-  } else {
-      if (rdy_head[USER_Q] -> p_nextready -> time < 100) {
+  }else {
+      if (rdy_head[USER_Q] -> p_nextready -> age < 100) {
         for (temp = rdy_head[USER_Q]; temp != last; temp = temp -> p_nextready) {
-          if (temp -> p_nextready -> time < 100)
-            temp -> p_nextready -> time++;
+          if (temp -> p_nextready -> age < 100)
+            temp -> p_nextready -> age++;
         }
         pick_proc();
-        return;
-      } else {
-        rdy_head[USER_Q] -> time = 1;
+      }else {
+        rdy_head[USER_Q] -> age = 1;
         if (nextp == NIL_PROC) {
           rdy_tail[USER_Q]->p_nextready = rdy_head[USER_Q];
 		      rdy_tail[USER_Q] = rdy_head[USER_Q];
 		      rdy_head[USER_Q] = rdy_head[USER_Q]->p_nextready;
 		      rdy_tail[USER_Q]->p_nextready = NIL_PROC;
 		      pick_proc();
-        } else {
+        }else {
           struct proc *temp_head = rdy_head[USER_Q];
           last -> p_nextready = rdy_head[USER_Q];
 		      rdy_head[USER_Q] = rdy_head[USER_Q]->p_nextready;
@@ -539,15 +538,7 @@ if (rdy_head[USER_Q] -> group == 2){
         }
       }
   }
-
 }
-
-
-
-
-
-
-
 }
 
 /*==========================================================================*

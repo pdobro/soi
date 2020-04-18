@@ -1,20 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <lib.h>
 #include <unistd.h>
 #include <limits.h>
-
-int getgroup(int pid);
-void setgroup(int pid, int group);
-
-int getgroup(int pid){
+#include <time.h>
+#include <math.h>
+int getpri(int pid){
 	message m;
 	m.m1_i1 = pid;
-	printf("PID: %d \n", pid);
 	return _syscall(MM, GETPRI, &m);
 }
 
-void setgroup(int pid, int group){
+void setpri(int pid, int group){
 	message m;
 	m.m1_i1 = pid;
 	m.m1_i2 = group;
@@ -23,18 +19,21 @@ void setgroup(int pid, int group){
 
 int main(int argc, char* argv[]){
 
-	int group;
-	int newgroup;
-	pid_t pid = getpid();
+	clock_t b, e;
+	double result;
+	int i, j, group;
+	group = atoi(argv[1]);
+	setpri(getpid(), group);
 	
-	group = getgroup(pid);
-	printf("Group: %d\n", group);
+	b = clock();
+	for(i = j = 0; i < 7000; i++){
+		sqrt(i);
+	}
+	e = clock();
+	result = ((double)(e - b))/CLOCKS_PER_SEC;
 
-
-		setgroup(pid, 2);
-		newgroup = getgroup(pid);
-		printf("Previous group: %d\nCurrent group: %d\n", group, newgroup);
-
+	group = getpri(getpid());
+	printf("pid: %d\nprio: %d\ntime: %fs\n", getpid(),group, result);
 
 	return 0;
 }

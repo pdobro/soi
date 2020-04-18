@@ -59,8 +59,8 @@ struct proc {
 
   char p_name[16];		/* name of the process */
 
-  int group;
-  int time;
+  int group;      /* process priority 1 - 3 */
+  int age;       /* used in scheduer */
 };
 
 /* Guard word for task stacks. */

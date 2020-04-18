@@ -131,7 +131,7 @@ PUBLIC void main()
   }
 
   proc[NR_TASKS+INIT_PROC_NR].p_pid = 1;/* INIT of course has pid 1 */
-   proc[NR_TASKS+INIT_PROC_NR].group = 1;
+   proc[NR_TASKS+INIT_PROC_NR].group = 1; /* nie wiem czy to potrzebne */
   bill_ptr = proc_addr(IDLE);		/* it has to point somewhere */
   proc_addr(IDLE)->p_priority = PPRI_IDLE;
   lock_pick_proc();

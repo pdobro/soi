@@ -146,8 +146,7 @@ FORWARD _PROTOTYPE( int do_getmap, (message *m_ptr) );
 FORWARD _PROTOTYPE( int do_sysctl, (message *m_ptr) );
 FORWARD _PROTOTYPE( int do_puts, (message *m_ptr) );
 FORWARD _PROTOTYPE( int do_findproc, (message *m_ptr) );
-
-
+/*------------------------------------------------*/
 FORWARD _PROTOTYPE( int do_getpri, (message *m_ptr) );
 FORWARD _PROTOTYPE( int do_setpri, (message *m_ptr) );
 
@@ -205,35 +204,25 @@ PUBLIC void sys_task()
 PRIVATE int do_setpri(m_ptr)
 message *m_ptr;
 {
-	struct proc *process;
-
-	int new_group;
-	new_group = m_ptr -> m1_i2;
-
-	for(process = BEG_PROC_ADDR; process < END_PROC_ADDR; process++){
-		if(istaskp(process) || isservp(process)) continue;
-
-		if((process -> p_pid == m_ptr -> m1_i1)){
-			process -> group = new_group;
-			return OK;
+	struct proc *p;
+	int prio;
+	prio = m_ptr -> m1_i2;
+	for(p = BEG_PROC_ADDR; p < END_PROC_ADDR; p++){
+		if((p -> p_pid == m_ptr -> m1_i1)&& (isuserp(p))){
+			p -> group = prio;
 		}
 	}
-	return (ESRCH);
 }
 	
 
 PRIVATE int do_getpri(m_ptr)
 message *m_ptr;
 {
-	struct proc *process;
-
-	for(process = BEG_PROC_ADDR; process < END_PROC_ADDR; process++){
-		if(istaskp(process) || isservp(process)) continue;
-
-		if(process -> p_pid == m_ptr -> m1_i1)
-			return process -> group;
+	struct proc *p;
+	for(p = BEG_PROC_ADDR; p < END_PROC_ADDR; p++){
+		if((process -> p_pid == m_ptr -> m1_i1)&&(isuserp(p)))
+			return p -> group;
 	}
-	return (ESRCH);
 }
 
 /*===========================================================================*
@@ -282,9 +271,9 @@ register message *m_ptr;	/* pointer to request message */
   rpc->child_utime = 0;
   rpc->child_stime = 0;
  
-  /* !!!!!!!!!!!!!!!!*/
+  /* !!!!!!!!!!!!!!!! set beg priority*/
   	rpc -> group = 1;
-    rpc -> time = 1;
+    rpc -> age = 1;
  
   return(OK);
 }
