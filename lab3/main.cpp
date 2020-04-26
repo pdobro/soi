@@ -1,46 +1,53 @@
 #include"message.hpp"
-#include"sem.hpp"
 
-Lista list;
 
-void runProducent() {
-    list.produce();
-}
+#define N 4//readers
+#define M 5//procucents
+#define P 2//consumers
+
+
+Synchronization example;
 
 void runReader() {
-    list.read();
+    example.read();
+}
+
+void runProducent() {
+    example.produce();
 }
 
 void runConsumer() {
-    list.consume();
+    example.consume();
 }
 
 
 int main(){
+
+
 srand(time(0));
 int i;
-std::thread producent[4], reader[5], consumer[2];
+
+std::thread producents_array[M], readers_array[N], consumers_array[P];
+
+for(i = 0; i < N; i++)
+    readers_array[i] = std::thread(runReader);
+for(i = 0; i < M; i++)
+    producents_array[i] = std::thread(runProducent);
+for(i = 0; i < P; i++)
+    consumers_array[i] = std::thread(runConsumer);
 
 
-for(i = 0; i < 4; i++)
-    producent[i] = std::thread(runProducent);
-for(i = 0; i < 5; i++)
-    reader[i] = std::thread(runReader);
-for(i = 0; i < 3; i++)
-    consumer[i] = std::thread(runConsumer);
+for(i = 0; i < N; i++)  
+    readers_array[i].join();
 
-  
-for(i = 0; i < 4; i++)  
-    producent[i].join();
+for(i = 0; i < M; i++)
+    producents_array[i].join();
 
-for(i = 0; i < 4; i++)
-    reader[i].join();
+for(i = 0; i < P; i++)
+    consumers_array[i].join();
 
-for(i = 0; i < 4; i++)
-    consumer[i].join();
-//list.read();
-//list.read();
-//list.read();
+
+
 
     return 0;
 }

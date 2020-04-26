@@ -1,6 +1,6 @@
 #include "message.hpp"
 
-void Lista::read () {
+void Synchronization::read () {
 
     reader reader;
     reader.reader_id = ++curr_reader_id;
@@ -8,7 +8,7 @@ void Lista::read () {
     while (true) {
         if ((reader.queue_id == 1) && (!buffer1.empty())) {
             mutex_q1.lock();
-            std::cout<<"reader "<<reader.reader_id<<" read msg nr"<< buffer1.back().message_id<<std::endl;
+            std::cout<<"reader "<<reader.reader_id<<" read msg nr: "<< buffer1.back().message_id<<std::endl;
             mutex_q1.unlock();
         } else if (!buffer2.empty()) {
             mutex_q2.lock();
@@ -16,15 +16,15 @@ void Lista::read () {
             mutex_q2.unlock();
         }
         
-        //add hete sleep
-        std::this_thread::sleep_for(std::chrono::milliseconds(rand()% 500));
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(rand()% SLEEPTIME));
     }   
 
 }
 
 
 
-void Lista::produce() {
+void Synchronization::produce() {
 int temp = ++curr_prod_id;
 while(true) {
 
@@ -49,12 +49,12 @@ while(true) {
     }
 
     //add here sleep
-        std::this_thread::sleep_for(std::chrono::milliseconds(rand()% 1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(rand()% 2* SLEEPTIME));
 
 }
 }
 
-void Lista::consume() {
+void Synchronization::consume() {
 
     while(true) {
         full_q1.wait();
@@ -72,7 +72,7 @@ void Lista::consume() {
         std::cout<<"deleted msg from second que. current size "<< buffer2.size()<<std::endl;
 
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(rand()% 5000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(rand()% 3 * SLEEPTIME));
 
     }
 
