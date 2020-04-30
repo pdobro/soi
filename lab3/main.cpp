@@ -1,8 +1,8 @@
 #include"message.hpp"
 
 
-#define N 4//readers
-#define M 5//procucents
+#define N 5//readers
+#define M 4//procucents
 #define P 2//consumers
 
 

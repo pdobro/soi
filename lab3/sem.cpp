@@ -5,9 +5,7 @@ Semaphore::Semaphore(int beg) {
         throw"init fail";
 }
 
-Semaphore::~Semaphore() {
-    sem_destroy(&semaphore);
-}
+//Semaphore::~Semaphore() {sem_destroy(&semaphore);}
 
  void Semaphore::wait(){
     if (sem_wait(&semaphore))

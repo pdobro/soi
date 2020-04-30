@@ -11,7 +11,7 @@ class Semaphore {
     public:
 
     Semaphore(int beg);
-    ~Semaphore();
+    //~Semaphore();
     void wait();
     void signal();
 
