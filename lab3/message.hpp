@@ -42,8 +42,8 @@ Semaphore empty_q1 = Semaphore(S);
 Semaphore empty_q2 = Semaphore(S);
 Semaphore full_q1 = Semaphore(0);
 Semaphore full_q2 = Semaphore(0);
-Semaphore reader_q1 = Semaphore(5);
-Semaphore reader_q2 = Semaphore(5);
+//Semaphore reader_q1 = Semaphore(5);
+//Semaphore reader_q2 = Semaphore(5);
 public:
 void printBuffers();
 void read();

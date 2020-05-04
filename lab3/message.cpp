@@ -18,25 +18,25 @@ void Synchronization::read () {
     reader.queue_id = reader.reader_id % 2 + 1;//
     while (true) {
         if ((reader.queue_id == 1) && (!buffer1.empty())) {
-            full_q1.wait();
-            mutex_q1.lock();
+            //full_q1.wait();
+            //mutex_q1.lock();
             mutex_stream.lock();
             std::cout<<"reader "<<reader.reader_id<<" read msg nr: "<< buffer1.back().message_id<<" first buffer"<<std::endl;
             printBuffers();
             mutex_stream.unlock();
             std::this_thread::sleep_for(std::chrono::seconds(4));
-            mutex_q1.unlock();
-            full_q1.signal();
+            //mutex_q1.unlock();
+            //full_q1.signal();
         } else if ((reader.queue_id == 2) && (!buffer2.empty()))  {
-            full_q2.wait();  
-            mutex_q2.lock();
+            //full_q2.wait();  
+            //mutex_q2.lock();
             mutex_stream.lock();
             std::cout<<"reader "<<reader.reader_id<<" read msg nr: "<< buffer2.back().message_id<<" second buffer"<<std::endl;
-                  printBuffers();
-   mutex_stream.unlock();
+            printBuffers();
+             mutex_stream.unlock();
             std::this_thread::sleep_for(std::chrono::seconds(4));
-            mutex_q2.unlock();
-            full_q2.signal();
+            //mutex_q2.unlock();
+            //full_q2.signal();
         }
         
 
@@ -90,7 +90,7 @@ while(true) {
 void Synchronization::consume() {
 
     while(true) {
-        if ((!buffer1.empty()) && (buffer2.size() < S)) {
+        if ((!buffer1.empty()) /*&& (buffer2.size() < S)*/) {
         full_q1.wait();
         mutex_q1.lock();
         buffer1.pop_back();
@@ -102,7 +102,7 @@ void Synchronization::consume() {
   
         mutex_stream.unlock();
         }  
-        if((!buffer2.empty()) && (buffer1.size() < S)) {
+        if((!buffer2.empty()) /*&& (buffer1.size() < S)*/) {
         full_q2.wait();
         mutex_q2.lock();
         buffer2.pop_back();
