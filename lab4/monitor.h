@@ -125,6 +125,7 @@ public:
 		sem_q2.v();
 	}
 
+	//czekaj 
 	void wait( Condition & cond, int queue )
 	{
 		++ cond.waitingCount;
