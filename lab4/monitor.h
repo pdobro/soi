@@ -108,11 +108,11 @@ class Monitor
 public:
 	Monitor() : sem_q1( 1 ), sem_q2( 1 ) {}
 
-	void enter_q1()
+	void enter_q1()//kolejka 1 
 	{
 		sem_q1.p();
 	}
-	void enter_q2()
+	void enter_q2()//kolejka 2
 	{
 		sem_q2.p();
 	}

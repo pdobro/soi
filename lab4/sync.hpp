@@ -23,7 +23,7 @@ struct reader {
     int queue_id;
 };
 
-
+//klasa Monitor w pliku monitor.h
 class Synchronization : Monitor{
 
 std::deque<message> buffer1;
