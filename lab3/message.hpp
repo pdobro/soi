@@ -13,7 +13,7 @@
 
 #define  S 10//queue size
 
-#define SLEEPTIME 1//in seconds
+#define SLEEPTIME 6//in seconds
 
 
 struct message {
@@ -29,7 +29,7 @@ struct reader {
 
 
 class Synchronization {
-std::deque<message> buffer1;
+std::deque<message> buffer1;//kolejki
 std::deque<message> buffer2;
 
 int curr_message_id = 1;
@@ -37,7 +37,7 @@ int curr_reader_id = 1;
 int curr_prod_id = 1;
 
 
-std::mutex mutex_q1, mutex_q2, mutex_stream;
+std::mutex mutex_q1, mutex_q2, mutex_stream;//mutex buforów i wyjścia
 Semaphore empty_q1 = Semaphore(S);
 Semaphore empty_q2 = Semaphore(S);
 Semaphore full_q1 = Semaphore(0);
