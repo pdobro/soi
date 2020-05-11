@@ -27,7 +27,7 @@ int main(){
 srand(time(0));
 int i;
 
-std::thread producents_array[M], readers_array[N], consumers_array[P];
+std::thread producents_array[M], readers_array[N], consumers_array[P];//wątki 
 
 for(i = 0; i < N; i++)
     readers_array[i] = std::thread(runReader);
