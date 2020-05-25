@@ -1,0 +1,100 @@
+const S = 4;
+
+
+server mutex {
+    var state : {up, down};
+
+    { wait | state = :up } -> {state = :down}
+    { signal } -> {state = :up}
+}
+
+server sem{
+    var value : 0..S;
+
+    { wait | value > 0 } -> { value = value - 1 }
+    { signal | value < S } -> { value = value + 1 }
+    { signal | value = S } -> { ok }
+}
+
+server deque {
+	var queue: 0..S;
+	var front:  0..S;
+	var back: 0..S;
+	{ get | queue > 0 } -> { queue = queue - 1; }
+	{ put | queue < S } -> { queue = queue + 1; }
+
+}
+
+var queue = deque() { queue = 0, front = 0, back = 0 };
+var queue2 = deque() { queue = 0, front = 0, back = 0 };
+var mutex = mutex() { state = :up };
+var mutex2 = mutex() { state = :up };
+var mutex_stream = mutex() { state = :up };
+var full = sem() { value = 0 };
+var full2 = sem() { value = 0 };
+var empty = sem() { value = S };
+var empty2 = sem() { value = S };
+
+thread consumer() {
+	loop {
+		full.wait();
+		mutex.wait();
+
+		queue.get();
+		
+		empty.signal();
+		mutex.signal();
+
+		full2.wait();
+		mutex2.wait();
+
+		queue2.get();
+		
+		empty2.signal();
+		mutex2.signal();
+
+
+
+	}
+}
+
+
+
+
+thread producer() {
+	loop {
+		empty.wait();
+		mutex.wait();
+
+		queue.put();
+		
+		full.signal();
+		mutex.signal();
+
+
+		empty2.wait();
+		mutex2.wait();
+
+		queue2.put();
+
+		full2.signal();
+		mutex2.signal();
+
+
+	}
+}
+
+thread reader() {
+	loop {
+
+	mutex_stream.wait();
+	--read
+	mutex_stream.signal();
+	}
+}
+
+
+
+
+
+
